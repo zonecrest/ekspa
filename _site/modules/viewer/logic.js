@@ -1,3 +1,5 @@
+import { renderChoiceStep, renderFallbackStep } from './step_types.js';
+
 document.addEventListener("DOMContentLoaded", async () => {
   const contentContainer = document.getElementById("spa-container");
   if (!contentContainer) {
@@ -36,11 +38,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (branding.accentColor) rootStyle.setProperty("--accent-color", branding.accentColor);
 
     let currentStepIndex = 0;
-    let retryCount = 0;
-    const maxRetries = 3;
-
-    // ✅ Response storage
     const responses = {};
+    const retryCountRef = { value: 0 };
 
     function goToStep(stepId) {
       const newIndex = steps.findIndex(s => s.id === stepId);
@@ -48,7 +47,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         contentContainer.innerHTML = `<p>Error: Unknown next step "${stepId}".</p>`;
       } else {
         currentStepIndex = newIndex;
-        retryCount = 0;
+        retryCountRef.value = 0;
+        renderStep();
+      }
+    }
+
+    function nextStep() {
+      if (currentStepIndex < steps.length - 1) {
+        currentStepIndex++;
         renderStep();
       }
     }
@@ -63,7 +69,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const wrapper = document.createElement("div");
 
-      // ✅ Progress indicator
       const progress = document.createElement("div");
       progress.className = "progress";
       progress.textContent = `Step ${currentStepIndex + 1} of ${steps.length}`;
@@ -79,63 +84,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         wrapper.appendChild(desc);
       }
 
-      if (step.type === "choice" && Array.isArray(step.options)) {
-        const form = document.createElement("form");
-
-        step.options.forEach(opt => {
-          const label = document.createElement("label");
-          const input = document.createElement("input");
-          input.type = "radio";
-          input.name = "choice";
-          input.value = opt.value;
-
-          label.appendChild(input);
-          label.append(` ${opt.label}`);
-          form.appendChild(label);
-          form.appendChild(document.createElement("br"));
-        });
-
-        const button = document.createElement("button");
-        button.type = "submit";
-        button.textContent = branding.primaryCTA || "Next";
-        form.appendChild(button);
-
-        form.addEventListener("submit", (e) => {
-          e.preventDefault();
-          const selected = form.elements["choice"].value;
-          responses[step.id] = selected;
-          console.log(`Response saved: ${step.id} → ${selected}`);
-          console.log("Current responses:", responses);
-
-          if (step.next) {
-            goToStep(step.next);
-          } else {
-            currentStepIndex++;
-            renderStep();
-          }
-        });
-
-        wrapper.appendChild(form);
-      } else {
-        const fallback = document.createElement("textarea");
-        fallback.rows = 4;
-        fallback.cols = 40;
-        wrapper.appendChild(fallback);
-
-        const button = document.createElement("button");
-        button.textContent = branding.primaryCTA || "Next";
-        button.addEventListener("click", () => {
-          if (retryCount < maxRetries && step.allowRetry) {
-            retryCount++;
-          } else {
-            currentStepIndex++;
-            retryCount = 0;
-          }
-          renderStep();
-        });
-
-        wrapper.appendChild(document.createElement("br"));
-        wrapper.appendChild(button);
+      switch (step.type) {
+        case "choice":
+          renderChoiceStep(step, wrapper, responses, branding, goToStep, nextStep);
+          break;
+        default:
+          renderFallbackStep(step, wrapper, branding, nextStep, step.allowRetry, retryCountRef);
+          break;
       }
 
       contentContainer.innerHTML = "";

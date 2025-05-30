@@ -1,13 +1,40 @@
 [
   {
-    "id": "test_choice_step",
+    "id": "q1",
     "type": "choice",
-    "title": "Test a Simple Choice",
-    "description": "This is a test of the 'choice' step type. Choose an option to continue.",
+    "title": "Which category best describes your business?",
+    "description": "Pick the one that most closely matches.",
     "options": [
-      { "label": "Option A", "value": "a" },
-      { "label": "Option B", "value": "b" }
-    ],
-    "next": "end"
+      { "label": "Product-based", "value": "product" },
+      { "label": "Service-based", "value": "service" }
+    ]
+  },
+  {
+    "id": "q2",
+    "type": "choice",
+    "title": "What is your current growth focus?",
+    "description": "Choose your top priority.",
+    "options": [
+      { "label": "Customer acquisition", "value": "acquisition" },
+      { "label": "Customer retention", "value": "retention" }
+    ]
+  },
+  {
+    "id": "q3",
+    "type": "choice",
+    "title": "How confident are you in your current messaging?",
+    "description": "Answer honestly — there's no wrong answer.",
+    "options": [
+      { "label": "Very confident", "value": "confident" },
+      { "label": "Somewhat confident", "value": "somewhat" },
+      { "label": "Not confident", "value": "not" }
+    ]
+  },
+  {
+    "id": "summary",
+    "type": "summary",
+    "title": "Your Responses",
+    "description": "Here’s what you told us so far.",
+    "include": ["q1", "q2", "q3"]
   }
 ]

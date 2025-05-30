@@ -26,25 +26,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     const branding = await brandingRes.json();
     const steps = await stepsRes.json();
 
-    // ✅ Apply dynamic CSS variables from branding.json
     const rootStyle = document.documentElement.style;
     if (branding.fontFamily) {
       rootStyle.setProperty("--font-family", branding.fontFamily);
       document.body.style.fontFamily = branding.fontFamily;
     }
-    if (branding.primary1) {
-      rootStyle.setProperty("--primary1", branding.primary1);
-    }
-    if (branding.primary2) {
-      rootStyle.setProperty("--primary2", branding.primary2);
-    }
-    if (branding.accentColor) {
-      rootStyle.setProperty("--accent-color", branding.accentColor);
-    }
+    if (branding.primary1) rootStyle.setProperty("--primary1", branding.primary1);
+    if (branding.primary2) rootStyle.setProperty("--primary2", branding.primary2);
+    if (branding.accentColor) rootStyle.setProperty("--accent-color", branding.accentColor);
 
     let currentStepIndex = 0;
     let retryCount = 0;
     const maxRetries = 3;
+
+    // ✅ Response storage
+    const responses = {};
 
     function goToStep(stepId) {
       const newIndex = steps.findIndex(s => s.id === stepId);
@@ -61,10 +57,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       const step = steps[currentStepIndex];
       if (!step) {
         contentContainer.innerHTML = `<p>All done!</p>`;
+        console.log("Final responses:", responses);
         return;
       }
 
       const wrapper = document.createElement("div");
+
+      // ✅ Progress indicator
+      const progress = document.createElement("div");
+      progress.className = "progress";
+      progress.textContent = `Step ${currentStepIndex + 1} of ${steps.length}`;
+      wrapper.appendChild(progress);
+
       const title = document.createElement("h2");
       title.textContent = step.title || "Untitled Step";
       wrapper.appendChild(title);
@@ -99,7 +103,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         form.addEventListener("submit", (e) => {
           e.preventDefault();
           const selected = form.elements["choice"].value;
-          console.log("Selected option:", selected);
+          responses[step.id] = selected;
+          console.log(`Response saved: ${step.id} → ${selected}`);
+          console.log("Current responses:", responses);
 
           if (step.next) {
             goToStep(step.next);

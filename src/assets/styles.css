@@ -1,11 +1,80 @@
 body {
-  font-family: system-ui, sans-serif;
+  font-family: var(--font-family, system-ui, sans-serif);
   padding: 2rem;
   max-width: 800px;
   margin: auto;
+  color: var(--primary2, #34495e);
+  background-color: var(--background, #ffffff);
 }
-button {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
+
+h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: var(--primary1, #1D3B60);
+}
+
+p {
   font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  color: var(--primary2, #34495e);
+  margin-bottom: 0.5rem;
+}
+
+input[type="radio"] {
+  margin-right: 0.5rem;
+  accent-color: var(--primary1, #1D3B60);
+  width: 1rem;
+  height: 1rem;
+}
+
+textarea {
+  width: 100%;
+  padding: 0.5rem;
+  font-family: var(--font-family, system-ui, sans-serif);
+  font-size: 1rem;
+  border: 1px solid var(--primary2, #ccc);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  background-color: #fff;
+  color: var(--primary2, #34495e);
+}
+
+form {
+  margin-bottom: 1.5rem;
+}
+
+button {
+  font-family: var(--font-family, system-ui, sans-serif);
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  color: var(--primary2, #34495e);
+  border: 1px solid var(--primary2, #34495e);
+  background-color: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  background-color: var(--primary2, #34495e);
+  color: #fff;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.progress {
+  font-size: 0.875rem;
+  color: var(--primary2, #34495e);
+  text-align: right;
+  margin-bottom: 1rem;
 }

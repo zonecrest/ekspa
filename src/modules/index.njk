@@ -1,0 +1,11 @@
+---
+layout: layout
+data: psf/data.json
+---
+<h2>{{ data.title }}</h2>
+<div id="app">
+  <p>{{ data.intro }}</p>
+  <button onclick="nextStep()">Start</button>
+  <div id="stepContainer"></div>
+</div>
+<script src="scripts.js"></script>

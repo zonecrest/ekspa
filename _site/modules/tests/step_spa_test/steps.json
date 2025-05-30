@@ -1,0 +1,13 @@
+[
+  {
+    "id": "test_choice_step",
+    "type": "choice",
+    "title": "Test a Simple Choice",
+    "description": "This is a test of the 'choice' step type. Choose an option to continue.",
+    "options": [
+      { "label": "Option A", "value": "a" },
+      { "label": "Option B", "value": "b" }
+    ],
+    "next": "end"
+  }
+]

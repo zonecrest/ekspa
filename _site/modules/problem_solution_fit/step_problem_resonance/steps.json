@@ -1,0 +1,16 @@
+[
+  {
+    "type": "choice",
+    "question": "What do your customers feel when they hear the problem you solve?",
+    "options": [
+      "They instantly relate",
+      "They nod politely but don’t seem engaged",
+      "They don’t understand what I mean",
+      "I’m not sure – I don’t talk about the problem directly"
+    ]
+  },
+  {
+    "type": "text",
+    "question": "How would you express this problem in a way that resonates with your audience?"
+  }
+]

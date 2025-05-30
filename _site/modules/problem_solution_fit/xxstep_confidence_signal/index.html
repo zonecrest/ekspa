@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clarity Compass – Problem–Solution Fit</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background-color: #FCF7EF;
+      color: #34495e;
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    h2, h3 { color: #1D3B60; }
+    label { display: block; margin-bottom: 0.75rem; }
+    .feedback, .followup {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-left: 4px solid #1D3B60;
+      background: #ecf9f1;
+    }
+    .hidden { display: none; }
+    button {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background: #601d38;
+      border: none;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #34495e;
+    }
+    #spinner {
+      display: none;
+      margin-top: 1rem;
+      font-style: italic;
+      color: #34495e;
+    }
+    #step-tracker {
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      color: #34495e;
+    }
+  </style>
+</head>
+<body>
+  <div id="step-tracker">Step 1 of 4</div>
+  <h2>Problem–Solution Fit: Your Confidence Signal</h2>
+  <p>Which of the following signals would tell you that you're now confident about your Problem–Solution Fit?</p>
+
+  <form id="confidenceForm">
+    <label><input type="radio" name="signal" value="describeProblem" /> I feel confident describing the problem I solve — and others instantly get it.</label>
+    <label><input type="radio" name="signal" value="solvingActiveProblem" /> I feel confident that I’m solving a problem customers are actively searching to fix.</label>
+    <label><input type="radio" name="signal" value="explainWhyItMatters" /> I feel confident I can explain why this problem matters, and what happens if it's ignored.</label>
+    <label><input type="radio" name="signal" value="presentWithUrgency" /> I feel confident presenting my solution in a way that resonates with customer urgency.</label>
+    <button type="submit">Next</button>
+    <div id="spinner">Processing your response...</div>
+  </form>
+
+  <div id="feedback" class="feedback hidden"></div>
+
+  <div id="followup" class="followup hidden">
+    <h3>Make It Stick</h3>
+    <p>Where will you use this message today to reinforce your clarity?</p>
+    <ul>
+      <li>✅ Update your LinkedIn headline or About section</li>
+      <li>✅ Share a short post with your audience</li>
+      <li>✅ Practice saying it in a 60-second pitch</li>
+      <li>✅ Add it to your landing page or email intro</li>
+    </ul>
+    <p><strong>Your turn:</strong> list 3 specific places you’ll use this today.</p>
+    <textarea rows="4" cols="60" placeholder="e.g., Pitch to investor group, update homepage, intro call with Jane..."></textarea>
+  </div>
+
+  <footer style="margin-top: 2rem; font-size: 0.8rem; color: #34495e;">
+    © 2025 Your Company. All rights reserved.
+  </footer>
+
+  <script>
+    document.getElementById('confidenceForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const selected = form.signal.value;
+      const feedback = document.getElementById('feedback');
+      const followup = document.getElementById('followup');
+      const spinner = document.getElementById('spinner');
+
+      spinner.style.display = 'block';
+      form.querySelector('button').disabled = true;
+
+      setTimeout(() => {
+        spinner.style.display = 'none';
+        form.querySelector('button').disabled = false;
+
+        let message = '';
+        switch (selected) {
+          case 'describeProblem':
+            message = "That’s a great sign — it shows you can communicate your value in a way that lands instantly.";
+            break;
+          case 'solvingActiveProblem':
+            message = "This tells you you're aligned with what people are actively searching for. That’s a powerful place to be.";
+            break;
+          case 'explainWhyItMatters':
+            message = "Explaining why it matters creates emotional resonance — this is what drives action.";
+            break;
+          case 'presentWithUrgency':
+            message = "This is about making customers feel that solving the problem *now* matters. Urgency converts.";
+            break;
+          default:
+            message = "Good choice. You're building clarity and confidence.";
+        }
+
+        feedback.textContent = message;
+        feedback.classList.remove('hidden');
+        followup.classList.remove('hidden');
+      }, 1500);
+    });
+  </script>
+</body>
+</html>

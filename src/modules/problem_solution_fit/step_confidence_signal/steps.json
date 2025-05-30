@@ -1,0 +1,27 @@
+[
+  {
+    "id": "signal-choice",
+    "title": "Your Confidence Signal",
+    "type": "radio",
+    "question": "Which of the following signals would tell you that you're now confident about your Problem–Solution Fit?",
+    "options": [
+      "I feel confident describing the problem I solve...",
+      "I feel confident that I’m solving a problem customers are actively searching to fix...",
+      "I feel confident I can explain why this problem matters...",
+      "I feel confident presenting my solution in a way that resonates with customer urgency..."
+    ],
+    "responseMap": {
+      "0": "That’s a great sign — you can communicate your value instantly.",
+      "1": "You're aligned with active demand. That’s powerful.",
+      "2": "Emotional resonance drives action. You’ve got it.",
+      "3": "Urgency creates conversion — strong positioning."
+    }
+  },
+  {
+    "id": "usage-commitment",
+    "title": "Make It Stick",
+    "type": "textarea",
+    "question": "Where will you use this message today to reinforce your clarity?",
+    "placeholder": "e.g., Investor call, homepage headline, Slack intro…"
+  }
+]

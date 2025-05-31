@@ -1,59 +1,57 @@
-// stepTypes.js
-export function renderChoiceStep(step, container, responses, branding, goToStep, nextStep) {
-  const form = document.createElement("form");
+// Handles rendering of each step type in Easy-Kit SPA
 
-  step.options.forEach(opt => {
-    const label = document.createElement("label");
-    const input = document.createElement("input");
-    input.type = "radio";
-    input.name = "choice";
-    input.value = opt.value;
+export function renderStep(step, responses, nextStep, allSteps) {
+  const container = document.getElementById("step-container");
+  container.innerHTML = "";
 
-    label.appendChild(input);
-    label.append(` ${opt.label}`);
-    form.appendChild(label);
-    form.appendChild(document.createElement("br"));
-  });
+  const title = document.createElement("h2");
+  title.textContent = step.title;
+  container.appendChild(title);
 
-  const button = document.createElement("button");
-  button.type = "submit";
-  button.textContent = branding.primaryCTA || "Next";
-  form.appendChild(button);
+  if (step.description) {
+    const desc = document.createElement("p");
+    desc.textContent = step.description;
+    container.appendChild(desc);
+  }
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const selected = form.elements["choice"].value;
-    responses[step.id] = selected;
-    console.log(`Response saved: ${step.id} → ${selected}`);
-    console.log("Current responses:", responses);
+  if (step.type === "choice") {
+    step.options.forEach(option => {
+      const button = document.createElement("button");
+      button.textContent = option.label;
+      button.onclick = () => {
+        responses[step.id] = option.value;
+        nextStep();
+      };
+      container.appendChild(button);
+    });
+  } else if (step.type === "info") {
+    const continueBtn = document.createElement("button");
+    continueBtn.textContent = "Continue";
+    continueBtn.onclick = nextStep;
+    container.appendChild(continueBtn);
 
-    if (step.next) {
-      goToStep(step.next);
-    } else {
-      nextStep();
-    }
-  });
+  } else if (step.type === "summary") {
+    const summaryBlock = document.createElement("div");
+    summaryBlock.className = "summary-block";
 
-  container.appendChild(form);
-}
+    step.include.forEach(id => {
+      const answer = responses[id];
+      const sourceStep = allSteps.find(s => s.id === id);
 
-export function renderFallbackStep(step, container, branding, nextStep, allowRetry, retryCountRef) {
-  const fallback = document.createElement("textarea");
-  fallback.rows = 4;
-  fallback.cols = 40;
-  container.appendChild(fallback);
+      const item = document.createElement("div");
+      item.className = "summary-item";
 
-  const button = document.createElement("button");
-  button.textContent = branding.primaryCTA || "Next";
-  button.addEventListener("click", () => {
-    if (retryCountRef.value < 3 && allowRetry) {
-      retryCountRef.value++;
-    } else {
-      retryCountRef.value = 0;
-      nextStep();
-    }
-  });
+      const label = document.createElement("strong");
+      label.textContent = sourceStep ? sourceStep.title + ": " : id + ": ";
 
-  container.appendChild(document.createElement("br"));
-  container.appendChild(button);
+      const value = document.createElement("span");
+      value.textContent = answer || "(no response)";
+
+      item.appendChild(label);
+      item.appendChild(value);
+      summaryBlock.appendChild(item);
+    });
+
+    container.appendChild(summaryBlock);
+  }
 }

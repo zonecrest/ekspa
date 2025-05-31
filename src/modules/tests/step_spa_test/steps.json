@@ -1,12 +1,24 @@
 [
   {
+    "id": "intro",
+    "type": "info",
+    "title": "Welcome to Your Easy-Kit",
+    "description": "This short sequence will help you explore your business situation. Let's begin."
+  },
+  {
     "id": "q1",
     "type": "choice",
     "title": "Which category best describes your business?",
     "description": "Pick the one that most closely matches.",
     "options": [
-      { "label": "Product-based", "value": "product" },
-      { "label": "Service-based", "value": "service" }
+      {
+        "label": "Product-based",
+        "value": "product"
+      },
+      {
+        "label": "Service-based",
+        "value": "service"
+      }
     ]
   },
   {
@@ -15,26 +27,45 @@
     "title": "What is your current growth focus?",
     "description": "Choose your top priority.",
     "options": [
-      { "label": "Customer acquisition", "value": "acquisition" },
-      { "label": "Customer retention", "value": "retention" }
+      {
+        "label": "Customer acquisition",
+        "value": "acquisition"
+      },
+      {
+        "label": "Customer retention",
+        "value": "retention"
+      }
     ]
   },
   {
     "id": "q3",
     "type": "choice",
     "title": "How confident are you in your current messaging?",
-    "description": "Answer honestly — there's no wrong answer.",
+    "description": "Answer honestly \u2014 there's no wrong answer.",
     "options": [
-      { "label": "Very confident", "value": "confident" },
-      { "label": "Somewhat confident", "value": "somewhat" },
-      { "label": "Not confident", "value": "not" }
+      {
+        "label": "Very confident",
+        "value": "confident"
+      },
+      {
+        "label": "Somewhat confident",
+        "value": "somewhat"
+      },
+      {
+        "label": "Not confident",
+        "value": "not"
+      }
     ]
   },
   {
     "id": "summary",
     "type": "summary",
     "title": "Your Responses",
-    "description": "Here’s what you told us so far.",
-    "include": ["q1", "q2", "q3"]
+    "description": "Here\u2019s what you told us so far.",
+    "include": [
+      "q1",
+      "q2",
+      "q3"
+    ]
   }
 ]

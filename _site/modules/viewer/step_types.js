@@ -1,57 +1,67 @@
 // Handles rendering of each step type in Easy-Kit SPA
 
-export function renderStep(step, responses, nextStep, allSteps) {
-  const container = document.getElementById("step-container");
-  container.innerHTML = "";
+export function renderChoiceStep(step, container, responses, nextStep) {
+  step.options.forEach(option => {
+    const button = document.createElement("button");
+    button.textContent = option.label;
+    button.onclick = () => {
+      responses[step.id] = option.value;
+      nextStep();
+    };
+    container.appendChild(button);
+  });
+}
 
-  const title = document.createElement("h2");
-  title.textContent = step.title;
-  container.appendChild(title);
+export function renderInfoStep(step, container, responses, nextStep) {
+  const label = document.createElement("label");
+  label.textContent = step.description || "Please enter your response:";
 
-  if (step.description) {
-    const desc = document.createElement("p");
-    desc.textContent = step.description;
-    container.appendChild(desc);
-  }
+  const input = document.createElement("input");
+  input.type = "text";
+  input.name = step.id;
 
-  if (step.type === "choice") {
-    step.options.forEach(option => {
-      const button = document.createElement("button");
-      button.textContent = option.label;
-      button.onclick = () => {
-        responses[step.id] = option.value;
-        nextStep();
-      };
-      container.appendChild(button);
-    });
-  } else if (step.type === "info") {
-    const continueBtn = document.createElement("button");
-    continueBtn.textContent = "Continue";
-    continueBtn.onclick = nextStep;
-    container.appendChild(continueBtn);
+  const continueBtn = document.createElement("button");
+  continueBtn.textContent = "Continue";
+  continueBtn.onclick = () => {
+    const value = input.value.trim();
+    if (value !== "") {
+      responses[step.id] = value;
+    }
+    nextStep();
+  };
 
-  } else if (step.type === "summary") {
-    const summaryBlock = document.createElement("div");
-    summaryBlock.className = "summary-block";
+  container.appendChild(label);
+  container.appendChild(input);
+  container.appendChild(continueBtn);
+}
 
-    step.include.forEach(id => {
-      const answer = responses[id];
-      const sourceStep = allSteps.find(s => s.id === id);
+export function renderSummaryStep(step, container, responses, allSteps) {
+  const summaryBlock = document.createElement("div");
+  summaryBlock.className = "summary-block";
 
-      const item = document.createElement("div");
-      item.className = "summary-item";
+  step.include.forEach(id => {
+    const answer = responses[id];
+    const sourceStep = allSteps.find(s => s.id === id);
 
-      const label = document.createElement("strong");
-      label.textContent = sourceStep ? sourceStep.title + ": " : id + ": ";
+    const item = document.createElement("div");
+    item.className = "summary-item";
 
-      const value = document.createElement("span");
-      value.textContent = answer || "(no response)";
+    const label = document.createElement("strong");
+    label.textContent = sourceStep ? sourceStep.title + ": " : id + ": ";
 
-      item.appendChild(label);
-      item.appendChild(value);
-      summaryBlock.appendChild(item);
-    });
+    const value = document.createElement("span");
+    value.textContent = answer || "(no response)";
 
-    container.appendChild(summaryBlock);
-  }
+    item.appendChild(label);
+    item.appendChild(value);
+    summaryBlock.appendChild(item);
+  });
+
+  container.appendChild(summaryBlock);
+}
+
+export function renderFallbackStep(step, container) {
+  const message = document.createElement("p");
+  message.textContent = `Unsupported step type: "${step.type}"`;
+  container.appendChild(message);
 }

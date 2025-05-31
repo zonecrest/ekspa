@@ -1,4 +1,4 @@
-import { renderChoiceStep, renderFallbackStep, renderSummaryStep } from './step_types.js';
+import { renderChoiceStep, renderInfoStep, renderSummaryStep, renderFallbackStep } from './step_types.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
   const contentContainer = document.getElementById("spa-container");
@@ -85,14 +85,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       switch (step.type) {
+        case "info":
+          renderInfoStep(step, wrapper, responses, nextStep);
+          break;
         case "choice":
-          renderChoiceStep(step, wrapper, responses, branding, goToStep, nextStep);
+          renderChoiceStep(step, wrapper, responses, nextStep);
           break;
         case "summary":
-          renderSummaryStep(step, wrapper, responses, steps, branding, nextStep); // ✅ FIXED
+          renderSummaryStep(step, wrapper, responses, steps);
           break;
         default:
-          renderFallbackStep(step, wrapper, branding, nextStep, step.allowRetry, retryCountRef);
+          renderFallbackStep(step, wrapper);
           break;
       }
 

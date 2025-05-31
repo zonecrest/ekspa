@@ -1,71 +1,46 @@
 [
   {
-    "id": "intro",
+    "id": "welcome",
     "type": "info",
-    "title": "Welcome to Your Easy-Kit",
-    "description": "This short sequence will help you explore your business situation. Let's begin."
+    "title": "Welcome to the Step Type Test",
+    "description": "This step tests the 'info' type with input enabled.",
+    "input": true
   },
   {
     "id": "q1",
     "type": "choice",
-    "title": "Which category best describes your business?",
-    "description": "Pick the one that most closely matches.",
+    "title": "Choose Your Favorite Color",
+    "description": "This step tests 'choice' input.",
     "options": [
-      {
-        "label": "Product-based",
-        "value": "product"
-      },
-      {
-        "label": "Service-based",
-        "value": "service"
-      }
+      { "label": "Red", "value": "red" },
+      { "label": "Green", "value": "green" },
+      { "label": "Blue", "value": "blue" }
     ]
   },
   {
     "id": "q2",
     "type": "choice",
-    "title": "What is your current growth focus?",
-    "description": "Choose your top priority.",
+    "title": "Choose Your Preferred Pet",
     "options": [
-      {
-        "label": "Customer acquisition",
-        "value": "acquisition"
-      },
-      {
-        "label": "Customer retention",
-        "value": "retention"
-      }
+      { "label": "Dog", "value": "dog" },
+      { "label": "Cat", "value": "cat" },
+      { "label": "Other", "value": "other" }
     ]
   },
   {
     "id": "q3",
     "type": "choice",
-    "title": "How confident are you in your current messaging?",
-    "description": "Answer honestly \u2014 there's no wrong answer.",
+    "title": "Choose Your Work Style",
     "options": [
-      {
-        "label": "Very confident",
-        "value": "confident"
-      },
-      {
-        "label": "Somewhat confident",
-        "value": "somewhat"
-      },
-      {
-        "label": "Not confident",
-        "value": "not"
-      }
+      { "label": "Remote", "value": "remote" },
+      { "label": "Office", "value": "office" },
+      { "label": "Hybrid", "value": "hybrid" }
     ]
   },
   {
     "id": "summary",
     "type": "summary",
-    "title": "Your Responses",
-    "description": "Here\u2019s what you told us so far.",
-    "include": [
-      "q1",
-      "q2",
-      "q3"
-    ]
+    "title": "Test Summary",
+    "include": ["welcome", "q1", "q2", "q3"]
   }
 ]

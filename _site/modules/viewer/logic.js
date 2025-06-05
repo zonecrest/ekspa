@@ -1,4 +1,11 @@
-import { renderChoiceStep, renderInfoStep, renderSummaryStep, renderFallbackStep } from './step_types.js';
+import {
+  renderChoiceStep,
+  renderInfoStep,
+  renderSummaryStep,
+  renderFallbackStep,
+  renderTextInputStep,
+  renderLongTextStep
+} from './step_types.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
   const contentContainer = document.getElementById("spa-container");
@@ -90,6 +97,12 @@ document.addEventListener("DOMContentLoaded", async () => {
           break;
         case "choice":
           renderChoiceStep(step, wrapper, responses, nextStep);
+          break;
+        case "text_input":
+          renderTextInputStep(step, wrapper, responses, nextStep);
+          break;
+        case "long_text":
+          renderLongTextStep(step, wrapper, responses, nextStep);
           break;
         case "summary":
           renderSummaryStep(step, wrapper, responses, steps);

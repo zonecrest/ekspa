@@ -1,0 +1,16 @@
+[
+            {
+                "type": "long_text",
+                "label": "What’s a common struggle your customers face before using your solution?",
+                "placeholder": "E.g., Spending hours manually updating spreadsheets"
+            },
+            {
+                "type": "text_input",
+                "label": "What kind of person typically experiences this struggle?",
+                "placeholder": "E.g., Operations managers in mid-sized logistics companies"
+            },
+            {
+                "type": "info",
+                "content": "Capturing recurring customer struggles helps you craft high-impact, empathy-driven messaging."
+            }
+        ]

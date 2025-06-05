@@ -35,6 +35,54 @@ export function renderInfoStep(step, container, responses, nextStep) {
   container.appendChild(continueBtn);
 }
 
+export function renderTextInputStep(step, container, responses, nextStep) {
+  const label = document.createElement("label");
+  label.textContent = step.label || "Enter your response:";
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.name = step.id;
+  input.placeholder = step.placeholder || "";
+
+  const continueBtn = document.createElement("button");
+  continueBtn.textContent = "Continue";
+  continueBtn.onclick = () => {
+    const value = input.value.trim();
+    if (value !== "") {
+      responses[step.id] = value;
+    }
+    nextStep();
+  };
+
+  container.appendChild(label);
+  container.appendChild(input);
+  container.appendChild(continueBtn);
+}
+
+export function renderLongTextStep(step, container, responses, nextStep) {
+  const label = document.createElement("label");
+  label.textContent = step.label || "Please provide detailed input:";
+
+  const textarea = document.createElement("textarea");
+  textarea.name = step.id;
+  textarea.rows = 6;
+  textarea.placeholder = step.placeholder || "";
+
+  const continueBtn = document.createElement("button");
+  continueBtn.textContent = "Continue";
+  continueBtn.onclick = () => {
+    const value = textarea.value.trim();
+    if (value !== "") {
+      responses[step.id] = value;
+    }
+    nextStep();
+  };
+
+  container.appendChild(label);
+  container.appendChild(textarea);
+  container.appendChild(continueBtn);
+}
+
 export function renderSummaryStep(step, container, responses, allSteps) {
   const summaryBlock = document.createElement("div");
   summaryBlock.className = "summary-block";

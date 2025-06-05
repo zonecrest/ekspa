@@ -3,6 +3,7 @@ import {
   renderInfoStep,
   renderSummaryStep,
   renderFallbackStep,
+  renderTextInputStep,
   renderLongTextStep
 } from './step_types.js';
 
@@ -96,6 +97,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           break;
         case "choice":
           renderChoiceStep(step, wrapper, responses, nextStep);
+          break;
+        case "text_input":
+          renderTextInputStep(step, wrapper, responses, nextStep);
           break;
         case "long_text":
           renderLongTextStep(step, wrapper, responses, nextStep);

@@ -1,0 +1,49 @@
+[
+  {
+    "id": "business_type",
+    "type": "choice",
+    "title": "Business Type",
+    "description": "What type of business do you operate?",
+    "options": [
+      {"label": "Professional Services", "value": "professional_services"},
+      {"label": "Product-based Business", "value": "product_business"},
+      {"label": "Technology/SaaS", "value": "technology"},
+      {"label": "Consulting", "value": "consulting"},
+      {"label": "Other", "value": "other"}
+    ]
+  },
+  {
+    "id": "target_audience",
+    "type": "text_input",
+    "title": "Target Audience",
+    "description": "Who are your ideal customers?",
+    "label": "Describe your target audience:",
+    "placeholder": "e.g., Small business owners, HR managers, etc."
+  },
+  {
+    "id": "current_challenges",
+    "type": "long_text",
+    "title": "Sales Material Challenges",
+    "description": "What challenges do you currently face with sales materials?",
+    "label": "Describe your current sales material challenges:",
+    "placeholder": "e.g., Materials are outdated, not branded consistently, take too long to create..."
+  },
+  {
+    "id": "key_messages",
+    "type": "long_text",
+    "title": "Key Messages",
+    "description": "What key messages do you want to convey to prospects?",
+    "label": "What are your main selling points and key messages?",
+    "placeholder": "e.g., We save time, reduce costs, increase efficiency..."
+  },
+  {
+    "id": "ai_resource_submit",
+    "type": "ai_resource_submit",
+    "title": "Generate Your Sales Material Template Guide",
+    "description": "Get a customized guide with step-by-step instructions for creating effective sales materials tailored to your business.",
+    "topic": "sales_material_templates",
+    "resourceType": "implementation_guide",
+    "buttonText": "Generate My Custom Guide",
+    "webhookUrl": "https://hook.eu2.make.com/rqrdi2m2ii6628mzq2gcj7kn7a5k07a4"
+  }
+]

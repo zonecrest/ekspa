@@ -40,6 +40,6 @@
     "description": "Receive personalized feedback on your understanding and get recommendations for improvement.",
     "topic": "draft_initial_materials",
     "buttonText": "Get My Assessment Results",
-    "webhookUrl": "https://hook.make.com/YOUR_ASSESSMENT_WEBHOOK_URL"
+    "webhookUrl": "https://hook.eu2.make.com/6skkbanrf4kowxk677e139tn5g74klsd"
   }
 ]

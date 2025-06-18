@@ -1,0 +1,45 @@
+[
+  {
+    "id": "learning_check_1",
+    "type": "choice",
+    "title": "Primary Benefit Question",
+    "description": "Test your understanding of the key concepts.",
+    "label": "What is a primary benefit of having Draft Initial Materials?",
+    "options": [
+      {"label": "Saves time during sales presentations", "value": "saves_time"},
+      {"label": "Impresses clients with fancy design", "value": "fancy_design"},
+      {"label": "Reduces last-minute scrambles and improves professionalism", "value": "reduces_scrambles"},
+      {"label": "Makes sales materials look expensive", "value": "expensive_look"}
+    ]
+  },
+  {
+    "id": "learning_check_2", 
+    "type": "choice",
+    "title": "Integration Question",
+    "description": "Show how you would apply the concepts.",
+    "label": "How can Draft Initial Materials be integrated into your sales process?",
+    "options": [
+      {"label": "Only use them for big clients", "value": "big_clients_only"},
+      {"label": "Have them ready for any sales opportunity", "value": "always_ready"},
+      {"label": "Create them after meeting prospects", "value": "create_after"},
+      {"label": "Use them only for cold calls", "value": "cold_calls_only"}
+    ]
+  },
+  {
+    "id": "practical_application",
+    "type": "long_text", 
+    "title": "Practical Application",
+    "description": "Describe how you would apply this in your business.",
+    "label": "Describe one specific way you could implement Draft Initial Materials in your current sales process:",
+    "placeholder": "Explain your implementation plan..."
+  },
+  {
+    "id": "ai_assessment_submit",
+    "type": "ai_assessment_submit",
+    "title": "Get Your Assessment Results", 
+    "description": "Receive personalized feedback on your understanding and get recommendations for improvement.",
+    "topic": "draft_initial_materials",
+    "buttonText": "Get My Assessment Results",
+    "webhookUrl": "https://hook.make.com/YOUR_ASSESSMENT_WEBHOOK_URL"
+  }
+]

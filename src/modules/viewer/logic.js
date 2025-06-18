@@ -4,7 +4,8 @@ import {
   renderSummaryStep,
   renderFallbackStep,
   renderTextInputStep,
-  renderLongTextStep
+  renderLongTextStep,
+  renderAiTutorSubmitStep
 } from './step_types.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -106,6 +107,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           break;
         case "summary":
           renderSummaryStep(step, wrapper, responses, steps);
+          break;
+        case "ai_tutor_submit":
+          renderAiTutorSubmitStep(step, wrapper, responses, kit, module);
           break;
         default:
           renderFallbackStep(step, wrapper);

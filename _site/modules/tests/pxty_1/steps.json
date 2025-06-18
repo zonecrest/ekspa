@@ -35,6 +35,6 @@
     "description": "Start your personalized AI tutoring session to learn how to align your product with your ideal customer profile.",
     "topic": "ideal_customer_profile",
     "buttonText": "Start AI Tutor Session",
-    "webhookUrl": "https://hook.make.com/YOUR_WEBHOOK_ID_HERE"
+    "webhookUrl": "https://hook.eu2.make.com/gl9qpx8csgvgtcsiob4a1tw8lgxxno1j"
   }
 ]

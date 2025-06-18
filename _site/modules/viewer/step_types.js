@@ -138,7 +138,7 @@ export function renderAiTutorSubmitStep(step, container, responses, kit, module)
         timestamp: new Date().toISOString()
       };
 
-      const webhookUrl = step.webhookUrl || `https://hook.make.com/your-webhook-url`;
+      const webhookUrl = step.webhookUrl || `https://hook.eu2.make.com/gl9qpx8csgvgtcsiob4a1tw8lgxxno1j`;
       
       const response = await fetch(webhookUrl, {
         method: 'POST',
@@ -257,7 +257,7 @@ export function renderAiAssessmentSubmitStep(step, container, responses, kit, mo
         timestamp: new Date().toISOString()
       };
 
-      const webhookUrl = step.webhookUrl || `https://hook.make.com/your-webhook-url`;
+      const webhookUrl = step.webhookUrl || `https://hook.eu2.make.com/6skkbanrf4kowxk677e139tn5g74klsd`;
       
       const response = await fetch(webhookUrl, {
         method: 'POST',

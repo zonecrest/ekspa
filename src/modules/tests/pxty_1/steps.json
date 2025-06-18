@@ -1,0 +1,40 @@
+[
+  {
+    "id": "current_product",
+    "type": "long_text",
+    "title": "Your Product/Service",
+    "description": "Describe your current product or service offering.",
+    "label": "What product or service does your business offer?",
+    "placeholder": "Describe your main product or service..."
+  },
+  {
+    "id": "customer_demographics", 
+    "type": "text_input",
+    "title": "Target Demographics",
+    "description": "Who are you currently selling to?",
+    "label": "Describe your current customer demographics:",
+    "placeholder": "Age range, location, industry, etc."
+  },
+  {
+    "id": "sales_channels",
+    "type": "choice",
+    "title": "Current Sales Channels",
+    "description": "How do you currently reach customers?",
+    "options": [
+      {"label": "Online/Digital Marketing", "value": "digital"},
+      {"label": "Direct Sales/Cold Calling", "value": "direct"},
+      {"label": "Referrals/Word of Mouth", "value": "referrals"},
+      {"label": "Trade Shows/Events", "value": "events"},
+      {"label": "Multiple Channels", "value": "multiple"}
+    ]
+  },
+  {
+    "id": "ai_tutor_submit",
+    "type": "ai_tutor_submit",
+    "title": "AI Tutor Session",
+    "description": "Start your personalized AI tutoring session to learn how to align your product with your ideal customer profile.",
+    "topic": "ideal_customer_profile",
+    "buttonText": "Start AI Tutor Session",
+    "webhookUrl": "https://hook.make.com/YOUR_WEBHOOK_ID_HERE"
+  }
+]

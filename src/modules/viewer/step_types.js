@@ -138,15 +138,48 @@ export function renderAiTutorSubmitStep(step, container, responses, kit, module)
         timestamp: new Date().toISOString()
       };
 
-      const webhookUrl = step.webhookUrl || `https://hook.make.com/your-webhook-url`;
-      
+      const webhookUrl = step.webhookUrl || `https://hook.eu2.make.com/gl9qpx8csgvgtcsiob4a1tw8lgxxno1j`;
       const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload)
-      });
+          },
+          body: JSON.stringify(payload)
+          });
+          
+          
+          /*
+      
+      
+      // Replace the fetch call with this for local testing:
+const mockResponse = {
+  success: true,
+  sessionType: "ai_tutor", 
+  topic: "ideal_customer_profile",
+  questions: [
+    {
+      question: "Test question 1?",
+      feedback: "Test feedback 1"
+    }
+  ],
+  summary: "Test summary"
+};
+setTimeout(() => {
+  loadingDiv.style.display = "none";
+  resultsDiv.style.display = "block";
+  displayTutorResults(mockResponse, resultsDiv);
+}, 2000);
+
+*/
+
+
+
+
+
+
+
+
+
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

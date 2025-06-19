@@ -4,11 +4,12 @@ import {
   renderSummaryStep,
   renderFallbackStep,
   renderTextInputStep,
-  renderLongTextStep,
-  renderAiTutorSubmitStep,
-  renderAiAssessmentSubmitStep,
-  renderAiResourceSubmitStep
-} from './step_types.js';
+  renderLongTextStep
+} from './basic_step_types.js';
+
+import { renderAiTutorSubmitStep } from './ai_tutor_steps.js';
+import { renderAiAssessmentSubmitStep } from './ai_assessment_steps.js';
+import { renderAiResourceSubmitStep } from './ai_resource_steps.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
   const contentContainer = document.getElementById("spa-container");

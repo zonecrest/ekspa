@@ -1,0 +1,418 @@
+<h1>Make.com Production Scenario Templates (Text Parser Approach)</h1>
+<h2>ChatGPT Model Recommendations</h2>
+<h3>For All Scenarios:</h3>
+<ul>
+<li><strong>Model</strong>: <code>gpt-4o</code> (recommended) or <code>gpt-4-turbo</code></li>
+<li><strong>Temperature</strong>: See specific settings below</li>
+<li><strong>Max Tokens</strong>: See specific settings below</li>
+<li><strong>Top P</strong>: <code>1</code> (default)</li>
+<li><strong>Frequency Penalty</strong>: <code>0</code> (default)</li>
+<li><strong>Presence Penalty</strong>: <code>0</code> (default)</li>
+</ul>
+<hr>
+<h2>1. AI Tutor Scenario Template</h2>
+<h3>Module Structure:</h3>
+<ol>
+<li><strong>Webhook Trigger</strong></li>
+<li><strong>Text Parser - Get Elements</strong> (JSON field extraction)</li>
+<li><strong>Filter</strong> (Validation)</li>
+<li><strong>ChatGPT AI Tutor</strong></li>
+<li><strong>Webhook Response</strong></li>
+<li><strong>Error Handler</strong> (runs on filter failure)</li>
+</ol>
+<h3>Module 1: Webhook Trigger</h3>
+<p><strong>Settings:</strong></p>
+<ul>
+<li>JSON pass-through: Yes</li>
+<li>Get request headers: Yes</li>
+<li>Get request HTTP method: Yes</li>
+</ul>
+<h3>Module 2: Text Parser - Get Elements</h3>
+<p><strong>Text to parse</strong>: ``</p>
+<p><strong>Elements to extract:</strong></p>
+<ul>
+<li><strong>kit</strong>:
+<ul>
+<li>Pattern: <code>&quot;kit&quot;\s*:\s*&quot;([^&quot;]*)&quot;</code></li>
+<li>Global match: No</li>
+</ul>
+</li>
+<li><strong>module</strong>:
+<ul>
+<li>Pattern: <code>&quot;module&quot;\s*:\s*&quot;([^&quot;]*)&quot;</code></li>
+<li>Global match: No</li>
+</ul>
+</li>
+<li><strong>sessionType</strong>:
+<ul>
+<li>Pattern: <code>&quot;sessionType&quot;\s*:\s*&quot;([^&quot;]*)&quot;</code></li>
+<li>Global match: No</li>
+</ul>
+</li>
+<li><strong>topic</strong>:
+<ul>
+<li>Pattern: <code>&quot;topic&quot;\s*:\s*&quot;([^&quot;]*)&quot;</code></li>
+<li>Global match: No</li>
+</ul>
+</li>
+<li><strong>responses</strong>:
+<ul>
+<li>Pattern: <code>&quot;responses&quot;\s*:\s*(\{.*?\})</code></li>
+<li>Global match: No</li>
+</ul>
+</li>
+</ul>
+<h3>Module 3: Filter (Validation)</h3>
+<p><strong>Condition</strong>:</p>
+<ul>
+<li>`` (Text) is not empty</li>
+<li>AND `` (Text) equals exactly <code>ai_tutor</code></li>
+</ul>
+<h3>Module 4: ChatGPT AI Tutor</h3>
+<p><strong>Model Settings:</strong></p>
+<ul>
+<li><strong>Model</strong>: <code>gpt-4o</code></li>
+<li><strong>Temperature</strong>: <code>0.7</code></li>
+<li><strong>Max Tokens</strong>: <code>1500</code></li>
+</ul>
+<p><strong>System Message:</strong></p>
+<pre><code>You are an expert business coach conducting a 10-minute AI tutoring session about .
+
+The user provided these responses: 
+
+Generate exactly 3 questions with personalized feedback following this structure for :
+
+Question 1: [Relevant question based on their responses]
+Feedback: [Specific, actionable advice based on their situation]
+
+Question 2: [Follow-up question building on their context]  
+Feedback: [Practical strategies tailored to their business]
+
+Question 3: [Implementation-focused question]
+Feedback: [Next steps and recommendations specific to their responses]
+
+Also provide a brief summary with key insights and next steps.
+
+Format your response as valid JSON:
+{
+  &quot;questions&quot;: [
+    {&quot;question&quot;: &quot;Question 1 text&quot;, &quot;feedback&quot;: &quot;Feedback 1 text&quot;},
+    {&quot;question&quot;: &quot;Question 2 text&quot;, &quot;feedback&quot;: &quot;Feedback 2 text&quot;}, 
+    {&quot;question&quot;: &quot;Question 3 text&quot;, &quot;feedback&quot;: &quot;Feedback 3 text&quot;}
+  ],
+  &quot;summary&quot;: &quot;Key insights and next steps summary&quot;
+}
+
+IMPORTANT: Return only valid JSON, no additional text or formatting.
+</code></pre>
+<h3>Module 5: Webhook Response (Success)</h3>
+<p><strong>Data Structure:</strong></p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;sessionType&quot;: &quot;ai_tutor&quot;,
+  &quot;topic&quot;: &quot;&quot;,
+  &quot;questions&quot;: ,
+  &quot;summary&quot;: &quot;&quot;,
+  &quot;timestamp&quot;: &quot;&quot;
+}
+</code></pre>
+<h3>Module 6: Error Handler (Fallback Route)</h3>
+<p><strong>Filter</strong>: <code>does not equal `ai_tutor` OR</code> is empty</p>
+<p><strong>Webhook Response:</strong></p>
+<pre><code class="language-json">{
+  &quot;success&quot;: false,
+  &quot;error&quot;: &quot;Invalid request for AI Tutor endpoint&quot;,
+  &quot;details&quot;: &quot;Expected sessionType: ai_tutor, received: &quot;,
+  &quot;timestamp&quot;: &quot;&quot;
+}
+</code></pre>
+<hr>
+<h2>2. AI Assessment Scenario Template</h2>
+<h3>Module Structure:</h3>
+<ol>
+<li><strong>Webhook Trigger</strong></li>
+<li><strong>Text Parser - Get Elements</strong></li>
+<li><strong>Filter</strong> (Validation)</li>
+<li><strong>ChatGPT Assessment</strong></li>
+<li><strong>Webhook Response</strong></li>
+<li><strong>Error Handler</strong></li>
+</ol>
+<h3>Module 2: Text Parser - Get Elements</h3>
+<p><strong>Same as AI Tutor</strong> - extract kit, module, sessionType, topic, responses</p>
+<h3>Module 3: Filter (Validation)</h3>
+<p><strong>Condition</strong>:</p>
+<ul>
+<li>`` (Text) equals exactly <code>ai_assessment</code></li>
+<li>AND `` (Text) is not empty</li>
+</ul>
+<h3>Module 4: ChatGPT Assessment</h3>
+<p><strong>Model Settings:</strong></p>
+<ul>
+<li><strong>Model</strong>: <code>gpt-4o</code></li>
+<li><strong>Temperature</strong>: <code>0.3</code> (more consistent scoring)</li>
+<li><strong>Max Tokens</strong>: <code>1200</code></li>
+</ul>
+<p><strong>System Message:</strong></p>
+<pre><code>You are an expert business coach conducting an assessment quiz about .
+
+User responses: 
+
+ASSESSMENT CRITERIA for :
+
+For &quot;draft_initial_materials&quot; topic:
+CORRECT ANSWERS:
+- learning_check_1: &quot;reduces_scrambles&quot; (Reduces last-minute scrambles and improves professionalism)
+- learning_check_2: &quot;always_ready&quot; (Have them ready for any sales opportunity)
+
+For &quot;ideal_customer_profile&quot; topic:
+CORRECT ANSWERS:
+- pain_points: &quot;coordination_issues&quot; 
+- demographics: &quot;specific_targeting&quot;
+
+SCORING: Total out of 100 points
+- Each multiple choice question: 40 points
+- Practical application response: 20 points
+
+Evaluate their responses and provide:
+1. Score out of 100
+2. Feedback for each question explaining correctness
+3. Overall assessment of understanding
+4. Specific recommendations for improvement
+
+Format as valid JSON:
+{
+  &quot;score&quot;: 85,
+  &quot;questions&quot;: [
+    {
+      &quot;question&quot;: &quot;What is a primary benefit of having Draft Initial Materials?&quot;,
+      &quot;userAnswer&quot;: &quot;Their actual response&quot;, 
+      &quot;feedback&quot;: &quot;Explanation of correctness and guidance&quot;
+    }
+  ],
+  &quot;overallFeedback&quot;: &quot;Assessment of their overall understanding&quot;,
+  &quot;recommendations&quot;: &quot;Specific next steps for improvement&quot;
+}
+
+IMPORTANT: Return only valid JSON, no additional text.
+</code></pre>
+<h3>Module 5: Webhook Response (Success)</h3>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;sessionType&quot;: &quot;ai_assessment&quot;,
+  &quot;topic&quot;: &quot;&quot;,
+  &quot;score&quot;: &quot;&quot;,
+  &quot;questions&quot;: ,
+  &quot;overallFeedback&quot;: &quot;&quot;,
+  &quot;recommendations&quot;: &quot;&quot;,
+  &quot;timestamp&quot;: &quot;&quot;
+}
+</code></pre>
+<h3>Module 6: Error Handler</h3>
+<p><strong>Filter</strong>: `` does not equal <code>ai_assessment</code></p>
+<p><strong>Webhook Response:</strong></p>
+<pre><code class="language-json">{
+  &quot;success&quot;: false,
+  &quot;error&quot;: &quot;Invalid request for AI Assessment endpoint&quot;,
+  &quot;details&quot;: &quot;Expected sessionType: ai_assessment, received: &quot;,
+  &quot;timestamp&quot;: &quot;&quot;
+}
+</code></pre>
+<hr>
+<h2>3. AI Resource Generation Scenario Template</h2>
+<h3>Module Structure:</h3>
+<ol>
+<li><strong>Webhook Trigger</strong></li>
+<li><strong>Text Parser - Get Elements</strong></li>
+<li><strong>Filter</strong> (Validation)</li>
+<li><strong>ChatGPT Resource Generator</strong></li>
+<li><strong>Webhook Response</strong></li>
+<li><strong>Error Handler</strong></li>
+</ol>
+<h3>Module 2: Text Parser - Get Elements</h3>
+<p><strong>Same as other scenarios</strong> - extract kit, module, sessionType, topic, responses</p>
+<h3>Module 3: Filter (Validation)</h3>
+<p><strong>Condition</strong>:</p>
+<ul>
+<li>`` (Text) equals exactly <code>ai_resource</code></li>
+<li>AND `` (Text) is not empty</li>
+</ul>
+<h3>Module 4: ChatGPT Resource Generator</h3>
+<p><strong>Model Settings:</strong></p>
+<ul>
+<li><strong>Model</strong>: <code>gpt-4o</code></li>
+<li><strong>Temperature</strong>: <code>0.8</code> (more creative for content generation)</li>
+<li><strong>Max Tokens</strong>: <code>3000</code> (longer content needed)</li>
+</ul>
+<p><strong>System Message:</strong></p>
+<pre><code>You are an expert business consultant creating a comprehensive implementation guide about .
+
+User Details: 
+
+Create a detailed, actionable implementation guide with exactly 3 main sections:
+
+1. **Introduction to ** - Explain concept and benefits specific to their business type
+2. **Step-by-Step Implementation Guide** - Practical steps tailored to their challenges  
+3. **Templates and Examples** - Specific examples relevant to their situation
+
+Requirements:
+- Make it highly practical and actionable
+- Include specific examples, checklists, and templates
+- Use HTML formatting for better presentation
+- Reference their specific challenges and goals
+- Provide ready-to-use templates they can implement immediately
+
+Format your response as valid JSON:
+{
+  &quot;title&quot;: &quot;Custom  Guide&quot;,
+  &quot;filename&quot;: &quot;_guide.html&quot;,
+  &quot;sections&quot;: [
+    {
+      &quot;title&quot;: &quot;Introduction to &quot;, 
+      &quot;content&quot;: &quot;&lt;h2&gt;Section Title&lt;/h2&gt;&lt;p&gt;Detailed HTML content...&lt;/p&gt;&quot;
+    },
+    {
+      &quot;title&quot;: &quot;Step-by-Step Implementation Guide&quot;,
+      &quot;content&quot;: &quot;&lt;h2&gt;Implementation&lt;/h2&gt;&lt;ol&gt;&lt;li&gt;Step 1...&lt;/li&gt;&lt;/ol&gt;&quot;
+    },
+    {
+      &quot;title&quot;: &quot;Templates and Examples&quot;,
+      &quot;content&quot;: &quot;&lt;h2&gt;Ready-to-Use Templates&lt;/h2&gt;&lt;div&gt;Template examples...&lt;/div&gt;&quot;
+    }
+  ]
+}
+
+IMPORTANT: 
+- Use proper HTML formatting in content sections
+- Include actionable checklists with [ ] checkboxes
+- Make examples specific to their business type
+- Return only valid JSON, no additional text
+</code></pre>
+<h3>Module 5: Webhook Response (Success)</h3>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;sessionType&quot;: &quot;ai_resource&quot;,
+  &quot;topic&quot;: &quot;&quot;,
+  &quot;title&quot;: &quot;&quot;,
+  &quot;filename&quot;: &quot;&quot;,
+  &quot;sections&quot;: ,
+  &quot;timestamp&quot;: &quot;&quot;
+}
+</code></pre>
+<h3>Module 6: Error Handler</h3>
+<p><strong>Filter</strong>: `` does not equal <code>ai_resource</code></p>
+<p><strong>Webhook Response:</strong></p>
+<pre><code class="language-json">{
+  &quot;success&quot;: false,
+  &quot;error&quot;: &quot;Invalid request for AI Resource endpoint&quot;, 
+  &quot;details&quot;: &quot;Expected sessionType: ai_resource, received: &quot;,
+  &quot;timestamp&quot;: &quot;&quot;
+}
+</code></pre>
+<hr>
+<h2>Implementation Steps</h2>
+<h3>For Each Scenario Type:</h3>
+<ol>
+<li>
+<p><strong>Create New Scenario</strong></p>
+<ul>
+<li>Add Webhook trigger module</li>
+<li>Configure JSON pass-through settings</li>
+</ul>
+</li>
+<li>
+<p><strong>Add Text Parser Module</strong></p>
+<ul>
+<li>Copy the regex patterns exactly as shown</li>
+<li>Map to `` from webhook</li>
+</ul>
+</li>
+<li>
+<p><strong>Add Filter Module</strong></p>
+<ul>
+<li>Set validation conditions</li>
+<li>This determines success/error path</li>
+</ul>
+</li>
+<li>
+<p><strong>Add ChatGPT Module</strong></p>
+<ul>
+<li>Configure model settings as specified</li>
+<li>Customize system prompt for your specific topic</li>
+<li>Test with sample responses</li>
+</ul>
+</li>
+<li>
+<p><strong>Add Success Response Module</strong></p>
+<ul>
+<li>Copy JSON structure exactly</li>
+<li>Map fields from previous modules</li>
+</ul>
+</li>
+<li>
+<p><strong>Add Error Handler Module</strong></p>
+<ul>
+<li>Configure as fallback route from filter</li>
+<li>Provides clear error messages</li>
+</ul>
+</li>
+</ol>
+<h3>Testing Process:</h3>
+<ol>
+<li><strong>Save and get webhook URL</strong></li>
+<li><strong>Test with curl:</strong></li>
+</ol>
+<pre><code class="language-bash">curl -X POST &quot;YOUR_WEBHOOK_URL&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;kit&quot;: &quot;test_kit&quot;,
+    &quot;module&quot;: &quot;test_module&quot;, 
+    &quot;sessionType&quot;: &quot;ai_tutor&quot;,
+    &quot;topic&quot;: &quot;test_topic&quot;,
+    &quot;responses&quot;: {&quot;test&quot;: &quot;data&quot;}
+  }'
+</code></pre>
+<ol start="3">
+<li><strong>Verify response format</strong></li>
+<li><strong>Test error handling</strong> with invalid sessionType</li>
+<li><strong>Check execution logs</strong> for any parsing issues</li>
+</ol>
+<hr>
+<h2>Topic Customization</h2>
+<h3>For Each Topic, Update:</h3>
+<ol>
+<li>
+<p><strong>ChatGPT System Prompt</strong></p>
+<ul>
+<li>Replace `` references with specific topic</li>
+<li>Add topic-specific examples and context</li>
+<li>Include relevant answer keys (for assessments)</li>
+</ul>
+</li>
+<li>
+<p><strong>Assessment Answer Keys</strong></p>
+<ul>
+<li>Document correct answers for each topic</li>
+<li>Update scoring rubric in prompt</li>
+<li>Test with sample responses</li>
+</ul>
+</li>
+<li>
+<p><strong>Resource Generation Examples</strong></p>
+<ul>
+<li>Customize for business type and industry</li>
+<li>Include topic-specific templates</li>
+<li>Reference real challenges and solutions</li>
+</ul>
+</li>
+</ol>
+<h3>Deployment Checklist:</h3>
+<ul>
+<li>[ ] Webhook URL updated in steps.json</li>
+<li>[ ] Text parser regex patterns configured</li>
+<li>[ ] Filter validation conditions set</li>
+<li>[ ] ChatGPT model and temperature configured</li>
+<li>[ ] System prompt customized for topic</li>
+<li>[ ] Success response format verified</li>
+<li>[ ] Error handling tested</li>
+<li>[ ] End-to-end flow validated</li>
+</ul>

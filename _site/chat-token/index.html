@@ -251,16 +251,18 @@
             <h1>Clarity Compass - Token Chat</h1>
             <p>Token-based AI assistant. Each message consumes 1 credit from your account.</p>
             
-            <!-- Debug info - remove this after testing -->
+            <!-- Debug controls - for development/testing -->
             <div class="debug-info">
-                Usage Type: Token Limited | Credits: <span x-text="tokensLeft"></span> remaining
-                <br>Alpine status: <span id="alpine-status">Not loaded</span>
+                <label for="debug-user-id">Debug User ID:</label>
+                <input type="text" id="debug-user-id" x-model="debugUserId" placeholder="Enter userId for testing" style="margin-left: 8px; padding: 4px;">
+                <button @click="setUserId()" style="margin-left: 8px; padding: 4px 8px; font-size: 12px;">Set User</button>
+                <br>Current User ID: <span x-text="userId"></span>
             </div>
             
             <div class="usage-display">
                 <div class="usage-item">
                     <span>💰 Credits:</span>
-                    <span class="usage-badge" :class="{ 'low': tokensLeft <= 5 }" x-text="tokensLeft"></span>
+                    <span class="usage-badge" :class="{ 'low': tokensLeft <= 5 }" x-text="tokensLeft !== null ? tokensLeft : '?'"></span>
                 </div>
             </div>
         </div>
@@ -287,14 +289,14 @@
                     @keydown.enter.prevent="handleKeyDown"
                     placeholder="Type your message here..."
                     class="input-field"
-                    :disabled="isLoading || tokensLeft <= 0"
+                    :disabled="isLoading || (tokensLeft !== null && tokensLeft <= 0)"
                     rows="1"
                     x-ref="textInput"
                 ></textarea>
                 <button 
                     @click="sendMessage()" 
                     class="send-button"
-                    :disabled="isLoading || !userInput.trim() || tokensLeft <= 0"
+                    :disabled="isLoading || !userInput.trim() || (tokensLeft !== null && tokensLeft <= 0)"
                     title="Send message"
                 >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -320,15 +322,12 @@
                 userInput: '',
                 isLoading: false,
                 errorMessage: '',
-                tokensLeft: 50,
+                tokensLeft: null, // Will be set by n8n response
                 userId: 'demo-user-' + Math.random().toString(36).substr(2, 9),
+                debugUserId: '', // For debug input field
                 
                 init() {
-                    // Update Alpine status indicator
-                    const statusEl = document.getElementById('alpine-status');
-                    if (statusEl) statusEl.textContent = 'Loaded successfully';
-                    
-                    console.log('Token chat initialized with 50 credits');
+                    console.log('Token chat initialized - User ID:', this.userId);
                     
                     // Auto-resize textarea
                     this.$watch('userInput', () => {
@@ -338,6 +337,14 @@
                             textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
                         });
                     });
+                },
+                
+                setUserId() {
+                    if (this.debugUserId.trim()) {
+                        this.userId = this.debugUserId.trim();
+                        this.tokensLeft = null; // Reset counter since we're switching users
+                        console.log('User ID set to:', this.userId);
+                    }
                 },
                 
                 handleKeyDown(event) {
@@ -350,8 +357,8 @@
                 async sendMessage() {
                     if (!this.userInput.trim() || this.isLoading) return;
                     
-                    // Check token limit
-                    if (this.tokensLeft <= 0) {
+                    // Only check token limit if we have token data from previous requests
+                    if (this.tokensLeft !== null && this.tokensLeft <= 0) {
                         this.addMessage('system', 'No credits remaining. Please purchase more to continue.');
                         return;
                     }
@@ -384,8 +391,10 @@
                             throw new Error(data.error || 'Failed to send message');
                         }
                         
-                        // Update token count
-                        this.tokensLeft = data.tokensLeft !== undefined ? data.tokensLeft : this.tokensLeft - 1;
+                        // Update token count from n8n response
+                        if (data.tokensLeft !== undefined) {
+                            this.tokensLeft = data.tokensLeft;
+                        }
                         
                         // Add AI response
                         this.addMessage('assistant', data.response);

@@ -210,7 +210,10 @@ permalink: /chat-unlimited/
             <p>Premium unlimited AI assistant. Chat as much as you need with no restrictions.</p>
             
             <div class="debug-info">
-                Usage Type: Unlimited | No restrictions applied
+                <label for="debug-user-id">Debug User ID:</label>
+                <input type="text" id="debug-user-id" x-model="debugUserId" placeholder="Enter userId for testing" style="margin-left: 8px; padding: 4px;">
+                <button @click="setUserId()" style="margin-left: 8px; padding: 4px 8px; font-size: 12px;">Set User</button>
+                <br>Current User ID: <span x-text="userId"></span>
             </div>
             
             <div class="unlimited-indicator">
@@ -274,9 +277,10 @@ permalink: /chat-unlimited/
                 isLoading: false,
                 errorMessage: '',
                 userId: 'demo-user-' + Math.random().toString(36).substr(2, 9),
+                debugUserId: '', // For debug input field
                 
                 init() {
-                    console.log('Unlimited chat initialized - no restrictions');
+                    console.log('Unlimited chat initialized - User ID:', this.userId);
                     
                     this.$watch('userInput', () => {
                         this.$nextTick(() => {
@@ -285,6 +289,13 @@ permalink: /chat-unlimited/
                             textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
                         });
                     });
+                },
+                
+                setUserId() {
+                    if (this.debugUserId.trim()) {
+                        this.userId = this.debugUserId.trim();
+                        console.log('User ID set to:', this.userId);
+                    }
                 },
                 
                 handleKeyDown(event) {

@@ -224,13 +224,16 @@ permalink: /chat-attempt/
             <p>Attempt-limited AI assistant. You have 10 attempts for this tutoring session.</p>
             
             <div class="debug-info">
-                Usage Type: Attempt Limited | Attempts: <span x-text="attemptsLeft"></span>/10 remaining
+                <label for="debug-user-id">Debug User ID:</label>
+                <input type="text" id="debug-user-id" x-model="debugUserId" placeholder="Enter userId for testing" style="margin-left: 8px; padding: 4px;">
+                <button @click="setUserId()" style="margin-left: 8px; padding: 4px 8px; font-size: 12px;">Set User</button>
+                <br>Current User ID: <span x-text="userId"></span>
             </div>
             
             <div class="usage-display">
                 <div class="usage-item">
                     <span>🔄 Attempts:</span>
-                    <span class="usage-badge" :class="{ 'low': attemptsLeft <= 2 }" x-text="attemptsLeft + '/10'"></span>
+                    <span class="usage-badge" :class="{ 'low': attemptsLeft <= 2 }" x-text="attemptsLeft !== null ? attemptsLeft + '/10' : '?/10'"></span>
                 </div>
             </div>
         </div>
@@ -257,14 +260,14 @@ permalink: /chat-attempt/
                     @keydown.enter.prevent="handleKeyDown"
                     placeholder="Type your question here..."
                     class="input-field"
-                    :disabled="isLoading || attemptsLeft <= 0"
+                    :disabled="isLoading || (attemptsLeft !== null && attemptsLeft <= 0)"
                     rows="1"
                     x-ref="textInput"
                 ></textarea>
                 <button 
                     @click="sendMessage()" 
                     class="send-button"
-                    :disabled="isLoading || !userInput.trim() || attemptsLeft <= 0"
+                    :disabled="isLoading || !userInput.trim() || (attemptsLeft !== null && attemptsLeft <= 0)"
                     title="Send message"
                 >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -290,11 +293,12 @@ permalink: /chat-attempt/
                 userInput: '',
                 isLoading: false,
                 errorMessage: '',
-                attemptsLeft: 10,
+                attemptsLeft: null, // Will be set by n8n response
                 userId: 'demo-user-' + Math.random().toString(36).substr(2, 9),
+                debugUserId: '', // For debug input field
                 
                 init() {
-                    console.log('Attempt chat initialized with 10 attempts');
+                    console.log('Attempt chat initialized - User ID:', this.userId);
                     
                     this.$watch('userInput', () => {
                         this.$nextTick(() => {
@@ -305,6 +309,14 @@ permalink: /chat-attempt/
                     });
                 },
                 
+                setUserId() {
+                    if (this.debugUserId.trim()) {
+                        this.userId = this.debugUserId.trim();
+                        this.attemptsLeft = null; // Reset counter since we're switching users
+                        console.log('User ID set to:', this.userId);
+                    }
+                },
+                
                 handleKeyDown(event) {
                     if (event.shiftKey) return;
                     this.sendMessage();
@@ -313,7 +325,8 @@ permalink: /chat-attempt/
                 async sendMessage() {
                     if (!this.userInput.trim() || this.isLoading) return;
                     
-                    if (this.attemptsLeft <= 0) {
+                    // Only check attempt limit if we have attempt data from previous requests
+                    if (this.attemptsLeft !== null && this.attemptsLeft <= 0) {
                         this.addMessage('system', 'No attempts remaining for this session.');
                         return;
                     }
@@ -342,7 +355,11 @@ permalink: /chat-attempt/
                             throw new Error(data.error || 'Failed to send message');
                         }
                         
-                        this.attemptsLeft = data.attemptsLeft !== undefined ? data.attemptsLeft : this.attemptsLeft - 1;
+                        // Update attempt count from n8n response
+                        if (data.attemptsLeft !== undefined) {
+                            this.attemptsLeft = data.attemptsLeft;
+                        }
+                        
                         this.addMessage('assistant', data.response);
                         
                     } catch (error) {

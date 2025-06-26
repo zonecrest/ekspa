@@ -103,7 +103,8 @@ async function callN8nWorkflow(message, userId, usageType = 'token') {
       },
       body: JSON.stringify({
         message: message,
-        userId: userId,
+        /*userId: userId,*/
+        userId: '007',
         usageType: usageType,
         timestamp: new Date().toISOString()
       })

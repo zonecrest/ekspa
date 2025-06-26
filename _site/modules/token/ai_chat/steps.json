@@ -1,0 +1,21 @@
+[
+  {
+    "id": "chat_intro",
+    "type": "info",
+    "title": "AI Chat Assistant",
+    "description": "Welcome to the token-based AI chat. Each message will consume one credit from your account.",
+    "content": "This chat interface demonstrates token-based metering. You start with 50 credits and each AI interaction consumes 1 credit."
+  },
+  {
+    "id": "ai_chat",
+    "type": "ai_chat",
+    "title": "Chat Interface",
+    "description": "Ask me anything! Your remaining credits are displayed above.",
+    "usageType": "token",
+    "initialTokens": 50,
+    "initialAttempts": 0,
+    "webhookUrl": "/.netlify/functions/n8n-chat",
+    "welcomeMessage": "Welcome to Clarity Compass! I'm here to help you with token-based assistance. How can I help you today?",
+    "placeholder": "Type your message here..."
+  }
+]

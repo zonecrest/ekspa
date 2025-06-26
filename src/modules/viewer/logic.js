@@ -10,6 +10,7 @@ import {
 import { renderAiTutorSubmitStep } from './ai_tutor_steps.js';
 import { renderAiAssessmentSubmitStep } from './ai_assessment_steps.js';
 import { renderAiResourceSubmitStep } from './ai_resource_steps.js';
+import { renderAiChatStep } from './ai_chat_steps.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
   const contentContainer = document.getElementById("spa-container");
@@ -39,6 +40,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const branding = await brandingRes.json();
     const steps = await stepsRes.json();
 
+    // Apply branding to CSS variables
     const rootStyle = document.documentElement.style;
     if (branding.fontFamily) {
       rootStyle.setProperty("--font-family", branding.fontFamily);
@@ -46,6 +48,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     if (branding.primary1) rootStyle.setProperty("--primary1", branding.primary1);
     if (branding.primary2) rootStyle.setProperty("--primary2", branding.primary2);
+    if (branding.background) rootStyle.setProperty("--background", branding.background);
+    if (branding.highlight) rootStyle.setProperty("--highlight", branding.highlight);
     if (branding.accentColor) rootStyle.setProperty("--accent-color", branding.accentColor);
 
     let currentStepIndex = 0;
@@ -119,6 +123,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           break;
         case "ai_resource_submit":
           renderAiResourceSubmitStep(step, wrapper, responses, kit, module);
+          break;
+        case "ai_chat":
+          renderAiChatStep(step, wrapper, responses, kit, module);
           break;
         default:
           renderFallbackStep(step, wrapper);

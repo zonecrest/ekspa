@@ -1,16 +1,17 @@
+---
+layout: false
+permalink: /chat-unlimited/
+---
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clarity Compass - AI Chat</title>
+    <title>{{ branding.productName }} - Unlimited Chat</title>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <!-- Fallback for Alpine.js -->
     <script>
-        // Check if Alpine loaded, if not, load from alternative CDN
         setTimeout(() => {
             if (typeof Alpine === 'undefined') {
-                console.log('Alpine.js not loaded, trying alternative CDN...');
                 const script = document.createElement('script');
                 script.src = 'https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js';
                 script.defer = true;
@@ -20,20 +21,15 @@
     </script>
     <style>
         :root {
-            /* Brand colors from your branding.json */
-            --primary1: #1D3B60;
-            --primary2: #34495e;
-            --background: #FCF7EF;
-            --highlight: #601d38;
-            --accent-color: #2ecc71;
-            --font-family: system-ui, sans-serif;
+            --primary1: {{ branding.primary1 or "#1D3B60" }};
+            --primary2: {{ branding.primary2 or "#34495e" }};
+            --background: {{ branding.background or "#FCF7EF" }};
+            --highlight: {{ branding.highlight or "#601d38" }};
+            --accent-color: {{ branding.accentColor or "#2ecc71" }};
+            --font-family: {{ branding.fontFamily or "system-ui, sans-serif" }};
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: var(--font-family);
@@ -41,11 +37,11 @@
             color: var(--primary2);
             line-height: 1.6;
         }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+        .brand-logo {
+            max-height: 40px;
+            margin-bottom: 16px;
         }
         
         .chat-header {
@@ -56,46 +52,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
-        .brand-logo {
-            max-height: 40px;
-            margin-bottom: 16px;
-        }
-        
-        h1 {
-            color: var(--primary1);
-            font-size: 1.75rem;
-            margin-bottom: 1rem;
-        }
-        
-        .usage-display {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--background);
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            border: 1px solid #e9ecef;
-        }
-        
-        .usage-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .usage-badge {
-            background: var(--primary1);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 16px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        
-        .usage-badge.low {
-            background: var(--highlight);
-        }
+        h1 { color: var(--primary1); font-size: 1.75rem; margin-bottom: 1rem; }
         
         .chat-container {
             background: white;
@@ -165,10 +122,7 @@
             max-height: 120px;
         }
         
-        .input-field:focus {
-            outline: none;
-            border-color: var(--primary1);
-        }
+        .input-field:focus { outline: none; border-color: var(--primary1); }
         
         .send-button {
             background: var(--primary1);
@@ -184,14 +138,8 @@
             transition: background 0.2s;
         }
         
-        .send-button:hover:not(:disabled) {
-            background: var(--highlight);
-        }
-        
-        .send-button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
+        .send-button:hover:not(:disabled) { background: var(--highlight); }
+        .send-button:disabled { background: #ccc; cursor: not-allowed; }
         
         .loading {
             display: flex;
@@ -201,10 +149,7 @@
             font-style: italic;
         }
         
-        .loading-dots {
-            display: flex;
-            gap: 4px;
-        }
+        .loading-dots { display: flex; gap: 4px; }
         
         .loading-dot {
             width: 6px;
@@ -241,32 +186,35 @@
             font-family: monospace;
             color: var(--primary2);
         }
+        
+        .unlimited-indicator {
+            background: var(--accent-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
     </style>
 </head>
 <body>
-    <div class="container" x-data="chatApp()" x-init="console.log('Alpine initialized with flags:', { tokenLimited, attemptLimited, unlimited })">>
+    <div class="container" x-data="chatApp()">
         <div class="chat-header">
-            <h1>AI Chat Assistant</h1>
-            <p>Ask me anything! Your usage is tracked and displayed below.</p>
+            {% if branding.logo %}
+            <img src="{{ branding.logo }}" alt="{{ branding.productName }}" class="brand-logo">
+            {% endif %}
             
-            <!-- Debug info - remove this after testing -->
+            <h1>{{ branding.productName }} - Unlimited Chat</h1>
+            <p>Premium unlimited AI assistant. Chat as much as you need with no restrictions.</p>
+            
             <div class="debug-info">
-                Debug: tokenLimited=<span x-text="tokenLimited">loading...</span>, 
-                attemptLimited=<span x-text="attemptLimited">loading...</span>, 
-                unlimited=<span x-text="unlimited">loading...</span>
-                <br>Alpine status: <span id="alpine-status">Not loaded</span>
-                <br>Brand: Clarity Compass | Module: Problem–Solution Fit
+                Usage Type: Unlimited | No restrictions applied
             </div>
             
-            <div class="usage-display" x-show="!unlimited">
-                <div class="usage-item" x-show="tokenLimited">
-                    <span>💰 Credits:</span>
-                    <span class="usage-badge" :class="{ 'low': tokensLeft <= 5 }" x-text="tokensLeft"></span>
-                </div>
-                <div class="usage-item" x-show="attemptLimited">
-                    <span>🔄 Attempts:</span>
-                    <span class="usage-badge" :class="{ 'low': attemptsLeft <= 2 }" x-text="attemptsLeft + '/' + maxAttempts"></span>
-                </div>
+            <div class="unlimited-indicator">
+                ∞ Unlimited Access
             </div>
         </div>
         
@@ -290,16 +238,16 @@
                 <textarea 
                     x-model="userInput" 
                     @keydown.enter.prevent="handleKeyDown"
-                    placeholder="Type your message here..."
+                    placeholder="Ask me anything - unlimited usage!"
                     class="input-field"
-                    :disabled="isLoading || (tokenLimited && tokensLeft <= 0) || (attemptLimited && attemptsLeft <= 0)"
+                    :disabled="isLoading"
                     rows="1"
                     x-ref="textInput"
                 ></textarea>
                 <button 
                     @click="sendMessage()" 
                     class="send-button"
-                    :disabled="isLoading || !userInput.trim() || (tokenLimited && tokensLeft <= 0) || (attemptLimited && attemptsLeft <= 0)"
+                    :disabled="isLoading || !userInput.trim()"
                     title="Send message"
                 >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -319,33 +267,17 @@
                     {
                         id: 1,
                         type: 'system',
-                        content: 'Welcome to Clarity Compass! I\'m here to help with Problem–Solution Fit. How can I assist you today?'
+                        content: 'Welcome to {{ branding.productName }}! You have unlimited access to this AI assistant. Ask me anything!'
                     }
                 ],
                 userInput: '',
                 isLoading: false,
                 errorMessage: '',
-                tokensLeft: 50,
-                attemptsLeft: 10,
-                maxAttempts: 10,
-                
-                // Usage type flags - only one should be true
-                tokenLimited: true,
-                attemptLimited: false,
-                unlimited: false,
                 userId: 'demo-user-' + Math.random().toString(36).substr(2, 9),
                 
                 init() {
-                    // Update Alpine status indicator
-                    const statusEl = document.getElementById('alpine-status');
-                    if (statusEl) statusEl.textContent = 'Loaded successfully';
+                    console.log('Unlimited chat initialized - no restrictions');
                     
-                    console.log('Chat app initialized with usage flags:', {
-                        tokenLimited: this.tokenLimited,
-                        attemptLimited: this.attemptLimited,
-                        unlimited: this.unlimited
-                    });
-                    // Auto-resize textarea
                     this.$watch('userInput', () => {
                         this.$nextTick(() => {
                             const textarea = this.$refs.textInput;
@@ -356,45 +288,28 @@
                 },
                 
                 handleKeyDown(event) {
-                    if (event.shiftKey) {
-                        return; // Allow new line with Shift+Enter
-                    }
+                    if (event.shiftKey) return;
                     this.sendMessage();
                 },
                 
                 async sendMessage() {
                     if (!this.userInput.trim() || this.isLoading) return;
                     
-                    // Check usage limits based on type
-                    if (this.tokenLimited && this.tokensLeft <= 0) {
-                        this.addMessage('system', 'No tokens remaining. Please purchase more to continue.');
-                        return;
-                    }
-                    
-                    if (this.attemptLimited && this.attemptsLeft <= 0) {
-                        this.addMessage('system', 'No attempts remaining for this session.');
-                        return;
-                    }
-                    
                     const message = this.userInput.trim();
                     this.userInput = '';
                     this.errorMessage = '';
                     
-                    // Add user message
                     this.addMessage('user', message);
-                    
                     this.isLoading = true;
                     
                     try {
                         const response = await fetch('/.netlify/functions/n8n-chat', {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                                 message: message,
                                 userId: this.userId,
-                                usageType: this.getUsageType()
+                                usageType: 'unlimited'
                             })
                         });
                         
@@ -404,16 +319,6 @@
                             throw new Error(data.error || 'Failed to send message');
                         }
                         
-                        // Update usage counters based on type
-                        if (this.tokenLimited) {
-                            this.tokensLeft = data.tokensLeft !== undefined ? data.tokensLeft : this.tokensLeft - 1;
-                        }
-                        if (this.attemptLimited) {
-                            this.attemptsLeft = data.attemptsLeft !== undefined ? data.attemptsLeft : this.attemptsLeft - 1;
-                        }
-                        // Unlimited users: no counter updates needed
-                        
-                        // Add AI response
                         this.addMessage('assistant', data.response);
                         
                     } catch (error) {
@@ -438,12 +343,6 @@
                 scrollToBottom() {
                     const messagesDiv = this.$refs.messages;
                     messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                },
-                
-                getUsageType() {
-                    if (this.tokenLimited) return 'token';
-                    if (this.attemptLimited) return 'attempt';
-                    return 'unlimited';
                 }
             }
         }

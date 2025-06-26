@@ -1,9 +1,13 @@
+---
+layout: false
+permalink: /chat/
+---
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clarity Compass - AI Chat</title>
+    <title>{{ branding.productName }} - AI Chat</title>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <!-- Fallback for Alpine.js -->
     <script>
@@ -21,12 +25,12 @@
     <style>
         :root {
             /* Brand colors from your branding.json */
-            --primary1: #1D3B60;
-            --primary2: #34495e;
-            --background: #FCF7EF;
-            --highlight: #601d38;
-            --accent-color: #2ecc71;
-            --font-family: system-ui, sans-serif;
+            --primary1: {{ branding.primary1 or "#1D3B60" }};
+            --primary2: {{ branding.primary2 or "#34495e" }};
+            --background: {{ branding.background or "#FCF7EF" }};
+            --highlight: {{ branding.highlight or "#601d38" }};
+            --accent-color: {{ branding.accentColor or "#2ecc71" }};
+            --font-family: {{ branding.fontFamily or "system-ui, sans-serif" }};
         }
         
         * {
@@ -255,7 +259,7 @@
                 attemptLimited=<span x-text="attemptLimited">loading...</span>, 
                 unlimited=<span x-text="unlimited">loading...</span>
                 <br>Alpine status: <span id="alpine-status">Not loaded</span>
-                <br>Brand: Clarity Compass | Module: Problem–Solution Fit
+                <br>Brand: {{ branding.productName }} | Module: {{ branding.moduleLabel }}
             </div>
             
             <div class="usage-display" x-show="!unlimited">
@@ -319,7 +323,7 @@
                     {
                         id: 1,
                         type: 'system',
-                        content: 'Welcome to Clarity Compass! I\'m here to help with Problem–Solution Fit. How can I assist you today?'
+                        content: 'Welcome to {{ branding.productName }}! I\'m here to help with {{ branding.moduleLabel }}. How can I assist you today?'
                     }
                 ],
                 userInput: '',

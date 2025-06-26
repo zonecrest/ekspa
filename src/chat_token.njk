@@ -1,13 +1,16 @@
+---
+layout: false
+permalink: /chat-token/
+---
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clarity Compass - AI Chat</title>
+    <title>{{ branding.productName }} - Token Chat</title>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <!-- Fallback for Alpine.js -->
     <script>
-        // Check if Alpine loaded, if not, load from alternative CDN
         setTimeout(() => {
             if (typeof Alpine === 'undefined') {
                 console.log('Alpine.js not loaded, trying alternative CDN...');
@@ -20,13 +23,12 @@
     </script>
     <style>
         :root {
-            /* Brand colors from your branding.json */
-            --primary1: #1D3B60;
-            --primary2: #34495e;
-            --background: #FCF7EF;
-            --highlight: #601d38;
-            --accent-color: #2ecc71;
-            --font-family: system-ui, sans-serif;
+            --primary1: {{ branding.primary1 or "#1D3B60" }};
+            --primary2: {{ branding.primary2 or "#34495e" }};
+            --background: {{ branding.background or "#FCF7EF" }};
+            --highlight: {{ branding.highlight or "#601d38" }};
+            --accent-color: {{ branding.accentColor or "#2ecc71" }};
+            --font-family: {{ branding.fontFamily or "system-ui, sans-serif" }};
         }
         
         * {
@@ -69,7 +71,7 @@
         
         .usage-display {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
             background: var(--background);
             padding: 12px 16px;
@@ -244,28 +246,25 @@
     </style>
 </head>
 <body>
-    <div class="container" x-data="chatApp()" x-init="console.log('Alpine initialized with flags:', { tokenLimited, attemptLimited, unlimited })">>
+    <div class="container" x-data="chatApp()" x-init="console.log('Alpine initialized - Token Limited Chat')">
         <div class="chat-header">
-            <h1>AI Chat Assistant</h1>
-            <p>Ask me anything! Your usage is tracked and displayed below.</p>
+            {% if branding.logo %}
+            <img src="{{ branding.logo }}" alt="{{ branding.productName }}" class="brand-logo">
+            {% endif %}
+            
+            <h1>{{ branding.productName }} - Token Chat</h1>
+            <p>Token-based AI assistant. Each message consumes 1 credit from your account.</p>
             
             <!-- Debug info - remove this after testing -->
             <div class="debug-info">
-                Debug: tokenLimited=<span x-text="tokenLimited">loading...</span>, 
-                attemptLimited=<span x-text="attemptLimited">loading...</span>, 
-                unlimited=<span x-text="unlimited">loading...</span>
+                Usage Type: Token Limited | Credits: <span x-text="tokensLeft"></span> remaining
                 <br>Alpine status: <span id="alpine-status">Not loaded</span>
-                <br>Brand: Clarity Compass | Module: Problem–Solution Fit
             </div>
             
-            <div class="usage-display" x-show="!unlimited">
-                <div class="usage-item" x-show="tokenLimited">
+            <div class="usage-display">
+                <div class="usage-item">
                     <span>💰 Credits:</span>
                     <span class="usage-badge" :class="{ 'low': tokensLeft <= 5 }" x-text="tokensLeft"></span>
-                </div>
-                <div class="usage-item" x-show="attemptLimited">
-                    <span>🔄 Attempts:</span>
-                    <span class="usage-badge" :class="{ 'low': attemptsLeft <= 2 }" x-text="attemptsLeft + '/' + maxAttempts"></span>
                 </div>
             </div>
         </div>
@@ -292,14 +291,14 @@
                     @keydown.enter.prevent="handleKeyDown"
                     placeholder="Type your message here..."
                     class="input-field"
-                    :disabled="isLoading || (tokenLimited && tokensLeft <= 0) || (attemptLimited && attemptsLeft <= 0)"
+                    :disabled="isLoading || tokensLeft <= 0"
                     rows="1"
                     x-ref="textInput"
                 ></textarea>
                 <button 
                     @click="sendMessage()" 
                     class="send-button"
-                    :disabled="isLoading || !userInput.trim() || (tokenLimited && tokensLeft <= 0) || (attemptLimited && attemptsLeft <= 0)"
+                    :disabled="isLoading || !userInput.trim() || tokensLeft <= 0"
                     title="Send message"
                 >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -319,20 +318,13 @@
                     {
                         id: 1,
                         type: 'system',
-                        content: 'Welcome to Clarity Compass! I\'m here to help with Problem–Solution Fit. How can I assist you today?'
+                        content: 'Welcome to {{ branding.productName }}! This is a token-based chat. You have 50 credits to start. How can I help you today?'
                     }
                 ],
                 userInput: '',
                 isLoading: false,
                 errorMessage: '',
                 tokensLeft: 50,
-                attemptsLeft: 10,
-                maxAttempts: 10,
-                
-                // Usage type flags - only one should be true
-                tokenLimited: true,
-                attemptLimited: false,
-                unlimited: false,
                 userId: 'demo-user-' + Math.random().toString(36).substr(2, 9),
                 
                 init() {
@@ -340,11 +332,8 @@
                     const statusEl = document.getElementById('alpine-status');
                     if (statusEl) statusEl.textContent = 'Loaded successfully';
                     
-                    console.log('Chat app initialized with usage flags:', {
-                        tokenLimited: this.tokenLimited,
-                        attemptLimited: this.attemptLimited,
-                        unlimited: this.unlimited
-                    });
+                    console.log('Token chat initialized with 50 credits');
+                    
                     // Auto-resize textarea
                     this.$watch('userInput', () => {
                         this.$nextTick(() => {
@@ -365,14 +354,9 @@
                 async sendMessage() {
                     if (!this.userInput.trim() || this.isLoading) return;
                     
-                    // Check usage limits based on type
-                    if (this.tokenLimited && this.tokensLeft <= 0) {
-                        this.addMessage('system', 'No tokens remaining. Please purchase more to continue.');
-                        return;
-                    }
-                    
-                    if (this.attemptLimited && this.attemptsLeft <= 0) {
-                        this.addMessage('system', 'No attempts remaining for this session.');
+                    // Check token limit
+                    if (this.tokensLeft <= 0) {
+                        this.addMessage('system', 'No credits remaining. Please purchase more to continue.');
                         return;
                     }
                     
@@ -394,7 +378,7 @@
                             body: JSON.stringify({
                                 message: message,
                                 userId: this.userId,
-                                usageType: this.getUsageType()
+                                usageType: 'token'
                             })
                         });
                         
@@ -404,14 +388,8 @@
                             throw new Error(data.error || 'Failed to send message');
                         }
                         
-                        // Update usage counters based on type
-                        if (this.tokenLimited) {
-                            this.tokensLeft = data.tokensLeft !== undefined ? data.tokensLeft : this.tokensLeft - 1;
-                        }
-                        if (this.attemptLimited) {
-                            this.attemptsLeft = data.attemptsLeft !== undefined ? data.attemptsLeft : this.attemptsLeft - 1;
-                        }
-                        // Unlimited users: no counter updates needed
+                        // Update token count
+                        this.tokensLeft = data.tokensLeft !== undefined ? data.tokensLeft : this.tokensLeft - 1;
                         
                         // Add AI response
                         this.addMessage('assistant', data.response);
@@ -438,12 +416,6 @@
                 scrollToBottom() {
                     const messagesDiv = this.$refs.messages;
                     messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                },
-                
-                getUsageType() {
-                    if (this.tokenLimited) return 'token';
-                    if (this.attemptLimited) return 'attempt';
-                    return 'unlimited';
                 }
             }
         }

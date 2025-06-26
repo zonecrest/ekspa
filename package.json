@@ -4,9 +4,12 @@
   "description": "Modular Easy-Kit SPA for embedding in Notion",
   "scripts": {
     "start": "eleventy --serve",
-    "build": "eleventy"
+    "dev": "eleventy --serve",
+    "build": "eleventy",
+    "deploy": "netlify deploy --prod"  
   },
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1"
   }
+
 }

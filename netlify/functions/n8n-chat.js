@@ -9,7 +9,7 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { message, userId } = JSON.parse(event.body);
+    const { message, userId, usageType = 'token' } = JSON.parse(event.body);
     
     if (!message || !userId) {
       return {
@@ -22,47 +22,60 @@ exports.handler = async (event, context) => {
     // For demo purposes, we'll simulate user data in memory
     const userData = await getUserData(userId);
     
-    // Check token and attempt limits
-    if (userData.tokensLeft <= 0) {
+    // Check usage limits based on type
+    if (usageType === 'token' && userData.tokensLeft <= 0) {
       return {
         statusCode: 200,
         body: JSON.stringify({
           error: 'No tokens remaining',
           tokensLeft: 0,
-          attemptsLeft: userData.attemptsLeft
+          usageType: usageType
         })
       };
     }
 
-    if (userData.attemptsLeft <= 0) {
+    if (usageType === 'attempt' && userData.attemptsLeft <= 0) {
       return {
         statusCode: 200,
         body: JSON.stringify({
           error: 'No attempts remaining',
-          tokensLeft: userData.tokensLeft,
-          attemptsLeft: 0
+          attemptsLeft: 0,
+          usageType: usageType
         })
       };
     }
 
     // Call n8n webhook
-    const n8nResponse = await callN8nWorkflow(message, userId);
+    const n8nResponse = await callN8nWorkflow(message, userId, usageType);
     
-    // Deduct usage
-    userData.tokensLeft -= 1;
-    userData.attemptsLeft -= 1;
+    // Deduct usage based on type
+    if (usageType === 'token') {
+      userData.tokensLeft -= 1;
+    } else if (usageType === 'attempt') {
+      userData.attemptsLeft -= 1;
+    }
+    // No deduction for 'unlimited' type
+    
     await updateUserData(userId, userData);
+
+    // Build response based on usage type
+    const response = {
+      response: n8nResponse.output,
+      usageType: usageType
+    };
+    
+    if (usageType === 'token') {
+      response.tokensLeft = userData.tokensLeft;
+    } else if (usageType === 'attempt') {
+      response.attemptsLeft = userData.attemptsLeft;
+    }
 
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        response: n8nResponse.output,
-        tokensLeft: userData.tokensLeft,
-        attemptsLeft: userData.attemptsLeft
-      })
+      body: JSON.stringify(response)
     };
 
   } catch (error) {
@@ -78,9 +91,9 @@ exports.handler = async (event, context) => {
 };
 
 // Simulate calling n8n workflow
-async function callN8nWorkflow(message, userId) {
+async function callN8nWorkflow(message, userId, usageType = 'token') {
   // Replace with your actual n8n webhook URL
-  const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL || 'https://zonecrest.app.n8n.cloud/webhook-test/chat-demo';
+  const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL || 'http://localhost:5678/webhook/chat-demo';
   
   try {
     const response = await fetch(N8N_WEBHOOK_URL, {
@@ -91,6 +104,7 @@ async function callN8nWorkflow(message, userId) {
       body: JSON.stringify({
         message: message,
         userId: userId,
+        usageType: usageType,
         timestamp: new Date().toISOString()
       })
     });
@@ -129,11 +143,13 @@ const userDataStore = new Map();
 
 async function getUserData(userId) {
   if (!userDataStore.has(userId)) {
-    // New user defaults
+    // New user defaults - could be configured per user type
     userDataStore.set(userId, {
       tokensLeft: 50,
       attemptsLeft: 10,
       maxAttempts: 10,
+      // Usage type flags could be set here based on user subscription/type
+      usageType: 'token', // 'token', 'attempt', or 'unlimited'
       createdAt: new Date().toISOString()
     });
   }

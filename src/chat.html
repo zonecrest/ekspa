@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Chat Assistant</title>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- Fallback for Alpine.js -->
+    <script>
+        // Check if Alpine loaded, if not, load from alternative CDN
+        setTimeout(() => {
+            if (typeof Alpine === 'undefined') {
+                console.log('Alpine.js not loaded, trying alternative CDN...');
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js';
+                script.defer = true;
+                document.head.appendChild(script);
+            }
+        }, 1000);
+    </script>
     <style>
         * {
             margin: 0;
@@ -196,17 +209,25 @@
     </style>
 </head>
 <body>
-    <div class="container" x-data="chatApp()">
+    <div class="container" x-data="chatApp()" x-init="console.log('Alpine initialized with flags:', { tokenLimited, attemptLimited, unlimited })">>
         <div class="chat-header">
             <h1>AI Chat Assistant</h1>
             <p>Ask me anything! Your usage is tracked and displayed below.</p>
             
-            <div class="usage-display">
-                <div class="usage-item">
+            <!-- Debug info - remove this after testing -->
+            <div style="background: #f0f0f0; padding: 8px; font-size: 12px; margin-bottom: 10px;">
+                Debug: tokenLimited=<span x-text="tokenLimited">loading...</span>, 
+                attemptLimited=<span x-text="attemptLimited">loading...</span>, 
+                unlimited=<span x-text="unlimited">loading...</span>
+                <br>Alpine status: <span id="alpine-status">Not loaded</span>
+            </div>
+            
+            <div class="usage-display" x-show="!unlimited">
+                <div class="usage-item" x-show="tokenLimited">
                     <span>💰 Tokens:</span>
                     <span class="usage-badge" :class="{ 'low': tokensLeft <= 5 }" x-text="tokensLeft"></span>
                 </div>
-                <div class="usage-item">
+                <div class="usage-item" x-show="attemptLimited">
                     <span>🔄 Attempts:</span>
                     <span class="usage-badge" :class="{ 'low': attemptsLeft <= 2 }" x-text="attemptsLeft + '/' + maxAttempts"></span>
                 </div>
@@ -235,14 +256,14 @@
                     @keydown.enter.prevent="handleKeyDown"
                     placeholder="Type your message..."
                     class="input-field"
-                    :disabled="isLoading || tokensLeft <= 0"
+                    :disabled="isLoading || (tokenLimited && tokensLeft <= 0) || (attemptLimited && attemptsLeft <= 0)"
                     rows="1"
                     x-ref="textInput"
                 ></textarea>
                 <button 
                     @click="sendMessage()" 
                     class="send-button"
-                    :disabled="isLoading || !userInput.trim() || tokensLeft <= 0"
+                    :disabled="isLoading || !userInput.trim() || (tokenLimited && tokensLeft <= 0) || (attemptLimited && attemptsLeft <= 0)"
                     title="Send message"
                 >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -271,9 +292,23 @@
                 tokensLeft: 50,
                 attemptsLeft: 10,
                 maxAttempts: 10,
+                
+                // Usage type flags - only one should be true
+                tokenLimited: true,
+                attemptLimited: false,
+                unlimited: false,
                 userId: 'demo-user-' + Math.random().toString(36).substr(2, 9),
                 
                 init() {
+                    // Update Alpine status indicator
+                    const statusEl = document.getElementById('alpine-status');
+                    if (statusEl) statusEl.textContent = 'Loaded successfully';
+                    
+                    console.log('Chat app initialized with usage flags:', {
+                        tokenLimited: this.tokenLimited,
+                        attemptLimited: this.attemptLimited,
+                        unlimited: this.unlimited
+                    });
                     // Auto-resize textarea
                     this.$watch('userInput', () => {
                         this.$nextTick(() => {
@@ -292,7 +327,18 @@
                 },
                 
                 async sendMessage() {
-                    if (!this.userInput.trim() || this.isLoading || this.tokensLeft <= 0) return;
+                    if (!this.userInput.trim() || this.isLoading) return;
+                    
+                    // Check usage limits based on type
+                    if (this.tokenLimited && this.tokensLeft <= 0) {
+                        this.addMessage('system', 'No tokens remaining. Please purchase more to continue.');
+                        return;
+                    }
+                    
+                    if (this.attemptLimited && this.attemptsLeft <= 0) {
+                        this.addMessage('system', 'No attempts remaining for this session.');
+                        return;
+                    }
                     
                     const message = this.userInput.trim();
                     this.userInput = '';
@@ -300,17 +346,6 @@
                     
                     // Add user message
                     this.addMessage('user', message);
-                    
-                    // Check limits before sending
-                    if (this.tokensLeft <= 0) {
-                        this.addMessage('system', 'No tokens remaining. Please purchase more to continue.');
-                        return;
-                    }
-                    
-                    if (this.attemptsLeft <= 0) {
-                        this.addMessage('system', 'No attempts remaining for this session.');
-                        return;
-                    }
                     
                     this.isLoading = true;
                     
@@ -322,7 +357,8 @@
                             },
                             body: JSON.stringify({
                                 message: message,
-                                userId: this.userId
+                                userId: this.userId,
+                                usageType: this.getUsageType()
                             })
                         });
                         
@@ -332,9 +368,14 @@
                             throw new Error(data.error || 'Failed to send message');
                         }
                         
-                        // Update usage counters
-                        this.tokensLeft = data.tokensLeft || this.tokensLeft - 1;
-                        this.attemptsLeft = data.attemptsLeft !== undefined ? data.attemptsLeft : this.attemptsLeft - 1;
+                        // Update usage counters based on type
+                        if (this.tokenLimited) {
+                            this.tokensLeft = data.tokensLeft !== undefined ? data.tokensLeft : this.tokensLeft - 1;
+                        }
+                        if (this.attemptLimited) {
+                            this.attemptsLeft = data.attemptsLeft !== undefined ? data.attemptsLeft : this.attemptsLeft - 1;
+                        }
+                        // Unlimited users: no counter updates needed
                         
                         // Add AI response
                         this.addMessage('assistant', data.response);
@@ -361,6 +402,12 @@
                 scrollToBottom() {
                     const messagesDiv = this.$refs.messages;
                     messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                },
+                
+                getUsageType() {
+                    if (this.tokenLimited) return 'token';
+                    if (this.attemptLimited) return 'attempt';
+                    return 'unlimited';
                 }
             }
         }

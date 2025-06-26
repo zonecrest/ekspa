@@ -351,11 +351,17 @@
                             throw new Error(data.error || 'Failed to send message');
                         }
                         
-                        // Update attempt count from n8n response
+                        // Check for error in response
+                        if (data.error) {
+                            throw new Error(data.error);
+                        }
+                        
+                        // Update attempt count from n8n response (n8n handles all usage logic)
                         if (data.attemptsLeft !== undefined) {
                             this.attemptsLeft = data.attemptsLeft;
                         }
                         
+                        // Add AI response
                         this.addMessage('assistant', data.response);
                         
                     } catch (error) {

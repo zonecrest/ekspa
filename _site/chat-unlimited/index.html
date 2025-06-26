@@ -326,6 +326,12 @@
                             throw new Error(data.error || 'Failed to send message');
                         }
                         
+                        // Check for error in response
+                        if (data.error) {
+                            throw new Error(data.error);
+                        }
+                        
+                        // Add AI response
                         this.addMessage('assistant', data.response);
                         
                     } catch (error) {

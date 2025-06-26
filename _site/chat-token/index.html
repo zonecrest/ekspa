@@ -391,7 +391,12 @@
                             throw new Error(data.error || 'Failed to send message');
                         }
                         
-                        // Update token count from n8n response
+                        // Check for error in response
+                        if (data.error) {
+                            throw new Error(data.error);
+                        }
+                        
+                        // Update token count from n8n response (n8n handles all usage logic)
                         if (data.tokensLeft !== undefined) {
                             this.tokensLeft = data.tokensLeft;
                         }

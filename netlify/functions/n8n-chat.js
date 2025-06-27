@@ -93,7 +93,7 @@ exports.handler = async (event, context) => {
 // Simulate calling n8n workflow
 async function callN8nWorkflow(message, userId, usageType = 'token') {
   // Replace with your actual n8n webhook URL
-  const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL || 'https://zonecrest.app.n8n.cloud/webhook-test/chat-demo';
+  const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL || 'https://zonecrest.app.n8n.cloud/webhook/chat-demo';
   
   try {
     const response = await fetch(N8N_WEBHOOK_URL, {
